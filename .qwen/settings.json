@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "byterover-mcp": {
+      "httpUrl": "https://mcp.byterover.dev/v2/mcp",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNLZXkiOiJway1ici05N2ZjZjAyYi04MmM0LTQ2MGUtYWYzNy1lNGUyMDFmZDk0ODEiLCJ1c2VySWQiOiJtb3RpZWxtYWt5ZXNAZ21haWwuY29tIiwiaWF0IjoxNzU2OTE3MTk1LCJleHAiOjE3NjIxMDExOTUsImlzcyI6IkJZVEVST1ZFUiBNQ1AgU0VSVkVSIn0.TIgLpJUF2s3ohnNi29LvZeohWbw3P6hmF6hChdH9Zhc"
+      }
+    }
+  }
+}

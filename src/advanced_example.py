@@ -8,8 +8,7 @@ from dotenv import load_dotenv
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from modules.core.agents_manager import AgentsManager
-from modules.core.workflow_builder import WorkflowBuilder
+from modules.core.agents_manager import AgentsManager, WorkflowBuilder
 
 
 # Load environment variables

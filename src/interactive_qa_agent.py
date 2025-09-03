@@ -2,7 +2,6 @@
 
 import asyncio
 import os
-import uuid
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.prompt import Prompt
@@ -68,17 +67,14 @@ async def interactive_conversation():
     console.print("You can ask questions, have a conversation, or type 'quit' to exit.")
     console.print("")
     
-    # Get user ID
-    user_id = Prompt.ask("[bold cyan]Enter your user ID[/bold cyan] (or press Enter for 'default_user')", default="default_user")
+    # Use default user ID
+    user_id = "default_user"
     
     # Create the agent
     manager = await create_qa_agent()
     
-    # Use a session ID that changes with each conversation or reuse one
-    session_id = str(uuid.uuid4())  # Generate a new session ID for each conversation
-    
     console.print(f"[bold green]User ID:[/bold green] {user_id}")
-    console.print(f"[bold green]Session ID:[/bold green] {session_id}")
+    console.print("[bold green]Session ID:[/bold green] Will be automatically generated")
     console.print("")
     
     # Start the conversation
@@ -92,12 +88,11 @@ async def interactive_conversation():
                 console.print("[bold yellow]Goodbye![/bold yellow]")
                 break
             
-            # Run the workflow
+            # Run the workflow (session_id will be automatically generated)
             result = await manager.run_workflow(
                 workflow_name="qa_agent",
                 input_text=user_input,
-                user_id=user_id,
-                session_id=session_id
+                user_id=user_id
             )
             
             # The output is already printed by the manager, but we can add a separator

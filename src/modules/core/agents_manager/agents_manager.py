@@ -16,7 +16,7 @@ from .agent_types import (
     ParallelAgentConfig,
     LoopAgentConfig
 )
-from ..ui.terminal_ui_manager import TerminalUIManager
+from ...ui.terminal_ui_manager import TerminalUIManager
 
 
 class AgentsManager:
@@ -82,46 +82,39 @@ class AgentsManager:
         # Create runner
         runner = Runner(agent=entry_agent, app_name=self.app_name, session_service=self.session_service)
         
+        # If no session_id provided, generate a UUID
+        if not session_id:
+            import uuid
+            session_id = str(uuid.uuid4())
+        
         # Create or get session
         session = None
-        if session_id:
-            # Try to get existing session
-            try:
-                session = await self.session_service.get_session(
-                    app_name=self.app_name,
-                    user_id=user_id,
-                    session_id=session_id
-                )
-                self.ui.print_session_creation("Retrieved existing session", session.id if session else None)
-                # If session doesn't exist, create a new one
-                if session is None:
-                    self.ui.print_warning("Session not found, creating new one")
-                    session = await self.session_service.create_session(
-                        app_name=self.app_name,
-                        user_id=user_id,
-                        session_id=session_id
-                    )
-                    self.ui.print_session_creation("Created new session with provided ID", session.id if session else None)
-            except Exception as e:
-                # If there's an exception, create a new one
-                self.ui.print_warning(f"Session not found or error occurred, creating new one: {e}")
+        # Try to get existing session
+        try:
+            session = await self.session_service.get_session(
+                app_name=self.app_name,
+                user_id=user_id,
+                session_id=session_id
+            )
+            self.ui.print_session_creation("Retrieved existing session", session.id if session else None)
+            # If session doesn't exist, create a new one
+            if session is None:
+                self.ui.print_warning("Session not found, creating new one")
                 session = await self.session_service.create_session(
                     app_name=self.app_name,
                     user_id=user_id,
                     session_id=session_id
                 )
-                self.ui.print_session_creation("Created new session with provided ID", session.id if session else None)
-        else:
-            # Create a new session
-            try:
-                session = await self.session_service.create_session(
-                    app_name=self.app_name,
-                    user_id=user_id
-                )
-                self.ui.print_session_creation("Created new session with generated ID", session.id if session else None)
-            except Exception as e:
-                self.ui.print_error(f"Error creating session: {e}")
-                raise
+                self.ui.print_session_creation("Created new session", session.id if session else None)
+        except Exception as e:
+            # If there's an exception, create a new one
+            self.ui.print_warning(f"Session not found or error occurred, creating new one: {e}")
+            session = await self.session_service.create_session(
+                app_name=self.app_name,
+                user_id=user_id,
+                session_id=session_id
+            )
+            self.ui.print_session_creation("Created new session", session.id if session else None)
         
         # Check if session was created successfully
         if session is None:
