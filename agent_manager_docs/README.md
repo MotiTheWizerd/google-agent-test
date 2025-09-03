@@ -8,6 +8,7 @@ Welcome to the documentation for the Agents Manager module, a flexible and dynam
 2. [Usage Examples](usage_examples.md) - Practical examples and use cases
 3. [API Reference](api_reference.md) - Detailed API documentation
 4. [Memory Module](memory_module.md) - Documentation for the memory integration module
+5. [Web Scraper Module](web_scraper_module.md) - Documentation for the web scraping tools
 
 ## Getting Started
 
@@ -23,6 +24,7 @@ The Agents Manager module allows you to create agent workflows dynamically throu
 - **Rich Logging**: Beautiful console output using the `rich` library
 - **Modular Architecture**: Refactored into smaller, more focused modules
 - **Memory Integration**: Seamless integration with external memory systems like Mem0
+- **Web Scraping Tools**: Integration with Firecrawl for web scraping, crawling, and extraction
 
 ### Installation
 
@@ -32,7 +34,7 @@ Make sure you have the required dependencies installed. The project uses Poetry 
 poetry install
 ```
 
-The required dependencies are specified in `pyproject.toml` and include `google-adk`, `rich`, `python-dotenv`, `pydantic`, and `mem0ai`.
+The required dependencies are specified in `pyproject.toml` and include `google-adk`, `rich`, `python-dotenv`, `pydantic`, `mem0ai`, and `firecrawl-py`.
 
 ### Quick Example
 
@@ -72,23 +74,30 @@ src/
     │       ├── workflow_builder.py       # Builder for workflows
     │       ├── agent_types.py            # Configuration schemas
     │       └── ... (test files)
-    └── memory/                          # Memory integration module
-        ├── __init__.py                  # Package initialization
-        ├── config.py                    # Configuration management
-        ├── errors.py                    # Custom exceptions
-        ├── interfaces.py                # Stable interfaces
-        ├── models.py                    # Data models
-        ├── adapters/                    # Memory system adapters
-        │   └── mem0_store.py            # Mem0 implementation
-        ├── utils/                       # Utility functions
-        │   └── retry.py                 # Retry utilities
-        └── tests/                       # Test suite
-            └── test_mem0_store.py       # Tests for Mem0 adapter
+    ├── memory/                          # Memory integration module
+    │   ├── __init__.py                  # Package initialization
+    │   ├── config.py                    # Configuration management
+    │   ├── errors.py                    # Custom exceptions
+    │   ├── interfaces.py                # Stable interfaces
+    │   ├── models.py                    # Data models
+    │   ├── adapters/                    # Memory system adapters
+    │   │   └── mem0_store.py            # Mem0 implementation
+    │   ├── utils/                       # Utility functions
+    │   │   └── retry.py                 # Retry utilities
+    │   └── tests/                       # Test suite
+    │       └── test_mem0_store.py       # Tests for Mem0 adapter
+    └── tools/                           # Tool modules
+        └── web_scraper/                 # Web scraping tools
+            ├── __init__.py              # Package initialization
+            ├── client.py                # Firecrawl client implementation
+            ├── firecrawl_tools.py       # Agent-oriented tool functions
+            └── types.py                 # Data classes for options
 
 docs/
 ├── agents_manager.md          # Complete documentation
 ├── usage_examples.md         # Practical examples
 ├── memory_module.md          # Memory module documentation
+├── web_scraper_module.md     # Web scraper module documentation
 └── api_reference.md          # API reference
 
 examples/
@@ -101,8 +110,9 @@ examples/
 1. Read the [Agents Manager Overview](agents_manager.md) for complete documentation
 2. Check out the [Usage Examples](usage_examples.md) for practical implementations
 3. Read the [Memory Module](memory_module.md) documentation for memory integration
-4. Run the example scripts in the `src` directory
-5. Experiment with creating your own workflows
+4. Read the [Web Scraper Module](web_scraper_module.md) documentation for web scraping tools
+5. Run the example scripts in the `src` directory
+6. Experiment with creating your own workflows
 
 ## Support
 

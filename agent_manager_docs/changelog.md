@@ -39,6 +39,12 @@
   - Enhanced UI manager with streaming text support
   - Improved event processing to properly support real-time output streaming
   - Added streaming test scripts to verify functionality
+- **Web Scraper Module**: Added comprehensive web scraping tools using Firecrawl:
+  - Client implementation for Firecrawl API
+  - Agent-oriented tool functions for scraping, searching, crawling, and extraction
+  - Data classes for configuration options
+  - Comprehensive documentation and usage examples
+  - Test suite with pytest
 
 ### Changed
 - Improved session creation logic to handle both existing and new sessions properly
