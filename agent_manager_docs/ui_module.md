@@ -13,11 +13,13 @@ The `TerminalUIManager` class provides methods for all common UI operations such
 
 ## Installation
 
-Make sure you have the required dependencies installed:
+Make sure you have the required dependencies installed using Poetry:
 
 ```bash
-pip install google-adk rich python-dotenv pydantic
+poetry install
 ```
+
+The required dependencies are specified in `pyproject.toml` and include `google-adk`, `rich`, `python-dotenv`, `pydantic`, and `mem0ai`.
 
 ## Quick Start
 

@@ -69,7 +69,11 @@ class TerminalUIManager:
         
         # Create header with emoji
         header_text = f"{emoji} {title} {emoji}"
-        self.console.print(Panel(header_text, style=style, expand=True))
+        try:
+            self.console.print(Panel(header_text, style=style, expand=True))
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(Panel(f" {title} ", style=style, expand=True))
     
     def print_workflow_info(self, workflow_name: str, description: str = "", agents: List[str] = [], emoji: str = "🔄") -> None:
         """Print workflow information with emojis and better formatting."""
@@ -102,11 +106,19 @@ class TerminalUIManager:
         """Print information about running workflow with emoji."""
         # Create running workflow panel with emoji
         workflow_text = f"{emoji} Executing Workflow: [bold]{workflow_name}[/bold] {emoji}"
-        self.console.print(Panel(workflow_text, style=self._get_color("workflow"), expand=True))
+        try:
+            self.console.print(Panel(workflow_text, style=self._get_color("workflow"), expand=True))
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(Panel(f"Executing Workflow: [bold]{workflow_name}[/bold]", style=self._get_color("workflow"), expand=True))
         
         # Show user and session info with emojis
         user_info = f"👤 User: [bold]{user_id}[/bold] | 🔐 Session: [bold]{session_id}[/bold]"
-        self.console.print(user_info, style=self._get_color("info"))
+        try:
+            self.console.print(user_info, style=self._get_color("info"))
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(f"User: [bold]{user_id}[/bold] | Session: [bold]{session_id}[/bold]", style=self._get_color("info"))
         
         # Add a progress spinner for visual feedback
         with Progress(
@@ -160,6 +172,11 @@ class TerminalUIManager:
         """Print streaming text output incrementally."""
         # Print text without a newline for streaming effect
         self.console.print(text, end='')
+        try:
+            # ensure immediate terminal update
+            self.console.file.flush()
+        except Exception:
+            pass
     
     def print_session_info(self, session_id: str, user_id: str, emoji_user: str = "👤", emoji_session: str = "🔐") -> None:
         """Print session information with emojis."""
@@ -190,21 +207,37 @@ class TerminalUIManager:
     def print_error(self, error: str, emoji: str = "❌ ") -> None:
         """Print an error message with emoji."""
         error_text = f"{emoji} [bold {self._get_color('error')}]Error:[/bold {self._get_color('error')}] {error}"
-        self.console.print(error_text)
+        try:
+            self.console.print(error_text)
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(f"[bold {self._get_color('error')}]Error:[/bold {self._get_color('error')}] {error}")
     
     def print_warning(self, warning: str, emoji: str = "⚠️ ") -> None:
         """Print a warning message with emoji."""
-        self.console.print(f"{emoji} [bold {self._get_color('warning')}]Warning:[/bold {self._get_color('warning')}] {warning}")
+        try:
+            self.console.print(f"{emoji} [bold {self._get_color('warning')}]Warning:[/bold {self._get_color('warning')}] {warning}")
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(f"[bold {self._get_color('warning')}]Warning:[/bold {self._get_color('warning')}] {warning}")
     
     def print_info(self, info: str, emoji: str = "ℹ️ ") -> None:
         """Print an info message with emoji."""
-        self.console.print(f"{emoji} [bold {self._get_color('info')}]Info:[/bold {self._get_color('info')}] {info}")
+        try:
+            self.console.print(f"{emoji} [bold {self._get_color('info')}]Info:[/bold {self._get_color('info')}] {info}")
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(f"[bold {self._get_color('info')}]Info:[/bold {self._get_color('info')}] {info}")
     
     def print_session_creation(self, action: str, session_id: Optional[str], emoji_create: str = "✨", emoji_retrieve: str = "🔍") -> None:
         """Print session creation information with emoji."""
         emoji = emoji_create if "create" in action.lower() else emoji_retrieve
         session_display = session_id if session_id else 'None'
-        self.console.print(f"{emoji} [bold {self._get_color('info')}]{action}:[/bold {self._get_color('info')}] {session_display}")
+        try:
+            self.console.print(f"{emoji} [bold {self._get_color('info')}]{action}:[/bold {self._get_color('info')}] {session_display}")
+        except UnicodeEncodeError:
+            # Fallback to plain text if emoji encoding fails
+            self.console.print(f"[bold {self._get_color('info')}]{action}:[/bold {self._get_color('info')}] {session_display}")
     
     def print_separator(self, char: str = "─", length: int = 60, style: str = "dim") -> None:
         """Print a separator line."""

@@ -42,6 +42,7 @@ The refactored architecture consists of the following modules:
   - Execute workflows with given parameters
   - Process events and capture results
   - Handle agent creation from configurations
+  - **Streaming Support**: Enable real-time output streaming with proper event handling
 
 ### 6. Existing Modules (Unchanged)
 - **AgentFactory**: Creates agents from configurations
@@ -65,6 +66,13 @@ New features can be added to specific modules without affecting others.
 
 ### 5. Clearer Code Organization
 The codebase is now better organized with a logical separation of concerns.
+
+### 6. Enhanced Streaming Support
+The refactored implementation now properly supports real-time streaming with:
+- Proper RunConfig configuration with StreamingMode.SSE
+- Correct handling of partial responses and final responses
+- Console flushing for immediate output display
+- Unicode encoding error handling for cross-platform compatibility
 
 ## Backward Compatibility
 

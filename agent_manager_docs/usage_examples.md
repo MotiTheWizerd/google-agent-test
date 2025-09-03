@@ -379,7 +379,7 @@ if __name__ == "__main__":
 To run these examples:
 
 1. Make sure you have set up your environment with the required API keys
-2. Install the dependencies: `pip install google-adk rich python-dotenv pydantic`
+2. Install the dependencies using Poetry: `poetry install`
 3. Run any of the examples: `python src/multi_user_example.py`
 
 ## Customization

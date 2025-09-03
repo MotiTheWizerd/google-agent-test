@@ -122,7 +122,7 @@ Run a registered workflow with the given input. Delegates to WorkflowExecutor. T
 async stream_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None)
 ```
 
-Stream a registered workflow with the given input. Delegates to WorkflowExecutor. This method yields events as they occur during workflow execution, allowing for real-time processing of streaming output.
+Stream a registered workflow with the given input. Delegates to WorkflowExecutor. This method yields events as they occur during workflow execution, allowing for real-time processing of streaming output. Proper streaming is enabled by passing RunConfig with StreamingMode.SSE to the ADK runner.
 
 **Parameters:**
 - `workflow_name` (str): The name of the workflow to run

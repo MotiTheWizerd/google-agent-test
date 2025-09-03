@@ -7,6 +7,7 @@ Welcome to the documentation for the Agents Manager module, a flexible and dynam
 1. [Agents Manager Overview](agents_manager.md) - Complete documentation of the module
 2. [Usage Examples](usage_examples.md) - Practical examples and use cases
 3. [API Reference](api_reference.md) - Detailed API documentation
+4. [Memory Module](memory_module.md) - Documentation for the memory integration module
 
 ## Getting Started
 
@@ -21,14 +22,17 @@ The Agents Manager module allows you to create agent workflows dynamically throu
 - **Session Management**: Built-in session handling with state persistence
 - **Rich Logging**: Beautiful console output using the `rich` library
 - **Modular Architecture**: Refactored into smaller, more focused modules
+- **Memory Integration**: Seamless integration with external memory systems like Mem0
 
 ### Installation
 
-Make sure you have the required dependencies installed:
+Make sure you have the required dependencies installed. The project uses Poetry for dependency management:
 
 ```bash
-pip install google-adk rich python-dotenv pydantic
+poetry install
 ```
+
+The required dependencies are specified in `pyproject.toml` and include `google-adk`, `rich`, `python-dotenv`, `pydantic`, and `mem0ai`.
 
 ### Quick Example
 
@@ -56,22 +60,35 @@ result = await manager.run_workflow("simple_workflow", "Hello, how are you?")
 ```
 src/
 └── modules/
-    └── core/
-        └── agents_manager/
-            ├── __init__.py               # Package initialization
-            ├── agents_manager.py         # Main orchestrator
-            ├── workflow_manager.py       # Workflow registration and management
-            ├── session_manager.py        # Session creation and management
-            ├── runner_manager.py         # Runner creation and management
-            ├── workflow_executor.py      # Workflow execution orchestration
-            ├── agent_factory.py          # Factory for creating agents
-            ├── workflow_builder.py       # Builder for workflows
-            ├── agent_types.py            # Configuration schemas
-            └── ... (test files)
+    ├── core/
+    │   └── agents_manager/
+    │       ├── __init__.py               # Package initialization
+    │       ├── agents_manager.py         # Main orchestrator
+    │       ├── workflow_manager.py       # Workflow registration and management
+    │       ├── session_manager.py        # Session creation and management
+    │       ├── runner_manager.py         # Runner creation and management
+    │       ├── workflow_executor.py      # Workflow execution orchestration
+    │       ├── agent_factory.py          # Factory for creating agents
+    │       ├── workflow_builder.py       # Builder for workflows
+    │       ├── agent_types.py            # Configuration schemas
+    │       └── ... (test files)
+    └── memory/                          # Memory integration module
+        ├── __init__.py                  # Package initialization
+        ├── config.py                    # Configuration management
+        ├── errors.py                    # Custom exceptions
+        ├── interfaces.py                # Stable interfaces
+        ├── models.py                    # Data models
+        ├── adapters/                    # Memory system adapters
+        │   └── mem0_store.py            # Mem0 implementation
+        ├── utils/                       # Utility functions
+        │   └── retry.py                 # Retry utilities
+        └── tests/                       # Test suite
+            └── test_mem0_store.py       # Tests for Mem0 adapter
 
 docs/
 ├── agents_manager.md          # Complete documentation
 ├── usage_examples.md         # Practical examples
+├── memory_module.md          # Memory module documentation
 └── api_reference.md          # API reference
 
 examples/
@@ -83,8 +100,9 @@ examples/
 
 1. Read the [Agents Manager Overview](agents_manager.md) for complete documentation
 2. Check out the [Usage Examples](usage_examples.md) for practical implementations
-3. Run the example scripts in the `src` directory
-4. Experiment with creating your own workflows
+3. Read the [Memory Module](memory_module.md) documentation for memory integration
+4. Run the example scripts in the `src` directory
+5. Experiment with creating your own workflows
 
 ## Support
 

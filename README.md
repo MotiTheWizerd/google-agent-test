@@ -10,11 +10,12 @@ The module is designed with multi-user support in mind, allowing proper session 
 
 ## Documentation
 
-See the [docs](docs/) directory for complete documentation:
+See the [agent_manager_docs](agent_manager_docs/) directory for complete documentation:
 
-- [Agents Manager Overview](docs/agents_manager.md)
-- [Usage Examples](docs/usage_examples.md)
-- [API Reference](docs/api_reference.md)
+- [Agents Manager Overview](agent_manager_docs/agents_manager.md)
+- [Usage Examples](agent_manager_docs/usage_examples.md)
+- [API Reference](agent_manager_docs/api_reference.md)
+- [Memory Module](agent_manager_docs/memory_module.md)
 
 ## Examples
 
@@ -22,6 +23,7 @@ See the [docs](docs/) directory for complete documentation:
 - [Advanced Example](src/advanced_example.py)
 - [Multi-User Example](src/multi_user_example.py)
 - [Streaming Example](src/streaming_example.py)
+- [Memory Integration Example](src/memory_integration_example.py)
 
 ## Features
 
@@ -33,12 +35,17 @@ See the [docs](docs/) directory for complete documentation:
 - **Multi-User Support**: Proper isolation and management of multiple users
 - **Streaming Support**: Real-time event processing for progressive output
 - **Rich Logging**: Beautiful console output using the `rich` library
+- **Memory Integration**: Seamless integration with external memory systems like Mem0
 
 ## Installation
 
+The project uses Poetry for dependency management:
+
 ```bash
-pip install google-adk rich python-dotenv pydantic
+poetry install
 ```
+
+The required dependencies are specified in `pyproject.toml` and include `google-adk`, `rich`, `python-dotenv`, `pydantic`, and `mem0ai`.
 
 ## Quick Start
 

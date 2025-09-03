@@ -6,6 +6,11 @@
 - Fixed session handling in AgentsManager to properly handle cases where `get_session` returns `None` instead of raising an exception
 - Updated `InMemorySessionService` initialization to remove invalid `dev_ui` parameter
 - Updated runner initialization to use `Runner` instead of `InMemoryRunner` with proper session service parameter
+- **Streaming Fix**: Enabled proper streaming in Google ADK by adding RunConfig with StreamingMode.SSE
+- **Streaming Fix**: Fixed event handling to properly process partial responses and final responses
+- **Streaming Fix**: Added console flushing to ensure real-time output display
+- **Encoding Fix**: Added Unicode encoding error handling to prevent issues with emojis on Windows
+- **Mem0 API Compatibility**: Updated Mem0 adapter to work with the latest Mem0 client API, including proper method names and parameter formats
 
 ### Added
 - Enhanced error handling and debugging output for session creation/retrieval
@@ -23,6 +28,12 @@
   - `stream_workflow` method in WorkflowExecutor for handling ADK event streaming
   - Streaming example demonstrating real-time response processing
   - Updated documentation with streaming usage examples and best practices
+- **Memory Module**: Added comprehensive memory integration module:
+  - Stable interface with Protocol and TypedDict definitions
+  - Mem0 adapter with proper error handling and retry logic
+  - Configuration management with environment variable support
+  - Comprehensive test suite with mocked clients
+  - Integration examples with the Agents Manager
 - **Enhanced Streaming**: Improved streaming implementation with proper real-time output:
   - Added proper handling of partial responses for streaming text output
   - Enhanced UI manager with streaming text support

@@ -48,11 +48,13 @@ The Agents Manager includes a dedicated UI module (`modules/ui/terminal_ui_manag
 
 The `TerminalUIManager` class provides methods for all common UI operations such as printing headers, workflow information, session details, errors, and agent responses.
 
-To use the Agents Manager module, ensure you have the required dependencies:
+To use the Agents Manager module, ensure you have the required dependencies installed using Poetry:
 
 ```bash
-pip install google-adk rich python-dotenv pydantic
+poetry install
 ```
+
+The required dependencies are specified in `pyproject.toml` and include `google-adk`, `rich`, `python-dotenv`, `pydantic`, and `mem0ai`.
 
 ## Quick Start
 
@@ -219,6 +221,13 @@ async for event in manager.stream_workflow(
         print("\n[Final response received]")
 ```
 
+**Key Streaming Features:**
+- Real-time text output as the AI generates responses
+- Proper handling of partial responses and final responses
+- Console flushing to ensure immediate display of output
+- Unicode encoding error handling for cross-platform compatibility
+- Tool call and response display during streaming
+
 ## Multi-User Support
 
 The Agents Manager is designed to support multiple users with proper session management:
@@ -383,7 +392,13 @@ The refactored Agents Manager now has a more modular architecture with the follo
 7. **Session Management**: Use meaningful user_id and session_id values for proper isolation.
 8. **Resource Cleanup**: Ensure proper cleanup of resources in long-running applications.
 9. **Streaming Usage**: Use streaming for applications that need real-time responses and progressive UI updates.
+10. **Streaming Best Practices**:
+    - Use `stream_workflow` for real-time output
+    - Handle `event.partial` for incremental text display
+    - Use `event.is_final_response()` to detect completion
+    - Implement console flushing for immediate output display
+    - Handle Unicode encoding errors for cross-platform compatibility
 
 ## Examples
 
-See the `src/example_usage.py`, `src/advanced_example.py`, `src/multi_user_example.py`, and `src/streaming_example.py` files for complete working examples.
+See the `src/example_usage.py`, `src/advanced_example.py`, `src/multi_user_example.py`, `src/streaming_example.py`, and `src/memory_integration_example.py` files for complete working examples.
