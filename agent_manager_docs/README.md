@@ -20,6 +20,7 @@ The Agents Manager module allows you to create agent workflows dynamically throu
 - **Tool Registration**: Easy registration and management of tools
 - **Session Management**: Built-in session handling with state persistence
 - **Rich Logging**: Beautiful console output using the `rich` library
+- **Modular Architecture**: Refactored into smaller, more focused modules
 
 ### Installation
 
@@ -56,16 +57,22 @@ result = await manager.run_workflow("simple_workflow", "Hello, how are you?")
 src/
 └── modules/
     └── core/
-        ├── agents_manager.py     # Main orchestrator
-        ├── agent_factory.py      # Factory for creating agents
-        ├── workflow_builder.py   # Builder for workflows
-        ├── agent_types.py        # Configuration schemas
-        └── __init__.py
+        └── agents_manager/
+            ├── __init__.py               # Package initialization
+            ├── agents_manager.py         # Main orchestrator
+            ├── workflow_manager.py       # Workflow registration and management
+            ├── session_manager.py        # Session creation and management
+            ├── runner_manager.py         # Runner creation and management
+            ├── workflow_executor.py      # Workflow execution orchestration
+            ├── agent_factory.py          # Factory for creating agents
+            ├── workflow_builder.py       # Builder for workflows
+            ├── agent_types.py            # Configuration schemas
+            └── ... (test files)
 
 docs/
 ├── agents_manager.md          # Complete documentation
 ├── usage_examples.md         # Practical examples
-└── api_reference.md          # API reference (coming soon)
+└── api_reference.md          # API reference
 
 examples/
 ├── example_usage.py          # Basic example

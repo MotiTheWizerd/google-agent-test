@@ -6,21 +6,35 @@ The Agents Manager module provides a flexible and dynamic way to create and mana
 
 The module is designed with multi-user support in mind, allowing proper session management for different users and sessions. It also features a modular UI system that separates the presentation layer from the business logic.
 
+This refactored version has been split into smaller, more focused modules to improve maintainability and testability.
+
 ## Key Components
 
 ### 1. AgentsManager
-The main orchestrator class that manages agent creation, workflow registration, and execution.
+The main orchestrator class that manages agent creation, workflow registration, and execution. It coordinates between all the other modules.
 
-### 2. WorkflowBuilder
-A builder pattern implementation for creating complex agent workflows with a fluent API.
+### 2. WorkflowManager
+Manages workflow registration, retrieval, and listing. Handles all workflow-related operations.
 
-### 3. AgentFactory
+### 3. SessionManager
+Handles session creation and management. Responsible for creating new sessions or retrieving existing ones.
+
+### 4. RunnerManager
+Manages the creation and configuration of runners for executing agents.
+
+### 5. WorkflowExecutor
+Orchestrates the execution of workflows, processing events, and capturing results.
+
+### 6. AgentFactory
 A factory pattern implementation for creating different types of agents based on configuration.
 
-### 4. TerminalUIManager
+### 7. WorkflowBuilder
+A builder pattern implementation for creating complex agent workflows with a fluent API.
+
+### 8. TerminalUIManager
 A dedicated UI manager for handling all terminal output using the rich library, separating UI concerns from business logic.
 
-### 5. Agent Types
+### 9. Agent Types
 Configuration schemas and enums for defining different agent types.
 
 ## UI Module
@@ -51,14 +65,16 @@ from modules.core.agents_manager import AgentsManager
 manager = AgentsManager(app_name="my_app")
 
 # Create a simple agent
-manager.create_workflow_builder("simple_agent")\
-    .add_llm_agent(
-        name="assistant",
-        model="gemini-2.0-flash",
-        instruction="You are a helpful assistant."
-    )\
-    .set_entry_point("assistant")\
-    .build()
+builder = manager.create_workflow_builder("simple_agent")
+builder.add_llm_agent(
+    name="assistant",
+    model="gemini-2.0-flash",
+    instruction="You are a helpful assistant."
+)
+
+# Build and register workflow
+workflow = builder.set_entry_point("assistant").build()
+manager.register_workflow(workflow)
 
 # Run the agent for a specific user and session
 result = await manager.run_workflow(
@@ -179,6 +195,30 @@ user_id = result["user_id"]
 events = result["events"]
 ```
 
+### Streaming Workflows
+
+For real-time output and progressive UI updates, use the streaming functionality:
+
+```python
+# Stream the workflow for real-time output
+async for event in manager.stream_workflow(
+    workflow_name="financial_analysis",
+    input_text="Analyze Apple's stock performance",
+    user_id="user_123",
+    session_id="session_456"
+):
+    # Process events as they occur
+    if hasattr(event, 'content') and event.content and hasattr(event.content, 'parts'):
+        for part in event.content.parts:
+            if hasattr(part, 'text') and part.text:
+                # Print streaming text as it arrives
+                print(part.text, end='', flush=True)
+    
+    # Handle final response
+    if event.is_final_response():
+        print("\n[Final response received]")
+```
+
 ## Multi-User Support
 
 The Agents Manager is designed to support multiple users with proper session management:
@@ -206,7 +246,109 @@ This allows for:
 | `get_workflow(name)` | Get a workflow configuration by name |
 | `list_workflows()` | List all registered workflow names |
 | `run_workflow(name, input_text, user_id, session_id)` | Execute a registered workflow |
+| `stream_workflow(name, input_text, user_id, session_id)` | Stream a registered workflow |
 | `print_workflow_info(name)` | Print information about a workflow |
+
+#### AgentsManager(app_name: str = "agents_manager_app")
+
+Constructor for the AgentsManager class.
+
+**Parameters:**
+- `app_name` (str): The name of the application for session management
+
+#### register_tool(name: str, tool_func: callable) -> None
+
+Register a tool function with a name.
+
+**Parameters:**
+- `name` (str): The name to register the tool under
+- `tool_func` (callable): The function to register as a tool
+
+#### register_agent(name: str, agent) -> None
+
+Register a pre-created agent.
+
+**Parameters:**
+- `name` (str): The name to register the agent under
+- `agent`: The agent instance to register
+
+#### create_workflow_builder(name: str) -> WorkflowBuilder
+
+Create a new workflow builder.
+
+**Parameters:**
+- `name` (str): The name for the new workflow
+
+**Returns:**
+- `WorkflowBuilder`: A new workflow builder instance
+
+#### register_workflow(workflow_config: WorkflowConfig) -> None
+
+Register a workflow configuration.
+
+**Parameters:**
+- `workflow_config` (WorkflowConfig): The workflow configuration to register
+
+#### get_workflow(name: str) -> Optional[WorkflowConfig]
+
+Get a workflow configuration by name.
+
+**Parameters:**
+- `name` (str): The name of the workflow to retrieve
+
+**Returns:**
+- `Optional[WorkflowConfig]`: The workflow configuration or None if not found
+
+#### list_workflows() -> List[str]
+
+List all registered workflow names.
+
+**Returns:**
+- `List[str]`: A list of registered workflow names
+
+#### run_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None) -> Dict[str, Any]
+
+Run a registered workflow with the given input. This method collects all events and returns them at the end of execution.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to run
+- `input_text` (str): The input text for the workflow
+- `user_id` (str): The user ID for session management
+- `session_id` (Optional[str]): The session ID (optional, will create new if None)
+
+**Returns:**
+- `Dict[str, Any]`: A dictionary containing the results with keys:
+  - `events`: List of events generated during execution
+  - `final_output`: The final output text
+  - `session_state`: The final session state
+  - `session_id`: The session ID used
+  - `user_id`: The user ID used
+
+**Raises:**
+- `ValueError`: If the workflow is not found
+
+#### stream_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None)
+
+Stream a registered workflow with the given input. This method yields events as they occur during workflow execution, allowing for real-time processing of streaming output.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to run
+- `input_text` (str): The input text for the workflow
+- `user_id` (str): The user ID for session management
+- `session_id` (Optional[str]): The session ID (optional, will create new if None)
+
+**Yields:**
+- Events from the ADK Runner as they occur during workflow execution
+
+**Raises:**
+- `ValueError`: If the workflow is not found
+
+#### print_workflow_info(workflow_name: str) -> None
+
+Print information about a registered workflow.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to display information for
 
 ### WorkflowBuilder Methods
 
@@ -220,6 +362,16 @@ This allows for:
 | `set_entry_point(agent_name)` | Set the workflow entry point |
 | `build()` | Build and return the workflow configuration |
 
+## Modular Architecture Benefits
+
+The refactored Agents Manager now has a more modular architecture with the following benefits:
+
+1. **Single Responsibility**: Each module has one clear purpose
+2. **Testability**: Smaller modules are easier to unit test
+3. **Maintainability**: Changes to one aspect don't affect others
+4. **Reusability**: Modules can be used independently
+5. **Extensibility**: New features can be added to specific modules
+
 ## Best Practices
 
 1. **Modular Design**: Create specialized agents for specific tasks rather than monolithic agents.
@@ -230,7 +382,8 @@ This allows for:
 6. **Workflow Validation**: Always validate workflows before running them in production.
 7. **Session Management**: Use meaningful user_id and session_id values for proper isolation.
 8. **Resource Cleanup**: Ensure proper cleanup of resources in long-running applications.
+9. **Streaming Usage**: Use streaming for applications that need real-time responses and progressive UI updates.
 
 ## Examples
 
-See the `src/example_usage.py`, `src/advanced_example.py`, and `src/multi_user_example.py` files for complete working examples.
+See the `src/example_usage.py`, `src/advanced_example.py`, `src/multi_user_example.py`, and `src/streaming_example.py` files for complete working examples.

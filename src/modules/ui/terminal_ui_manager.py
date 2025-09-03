@@ -156,6 +156,11 @@ class TerminalUIManager:
             expand=True
         ))
     
+    def print_streaming_text(self, text: str) -> None:
+        """Print streaming text output incrementally."""
+        # Print text without a newline for streaming effect
+        self.console.print(text, end='')
+    
     def print_session_info(self, session_id: str, user_id: str, emoji_user: str = "👤", emoji_session: str = "🔐") -> None:
         """Print session information with emojis."""
         self.console.print(f"{emoji_user} [bold {self._get_color('info')}]User ID:[/bold {self._get_color('info')}] {user_id}")
@@ -182,16 +187,16 @@ class TerminalUIManager:
             
             self.console.print(table)
     
-    def print_error(self, error: str, emoji: str = "❌") -> None:
+    def print_error(self, error: str, emoji: str = "❌ ") -> None:
         """Print an error message with emoji."""
         error_text = f"{emoji} [bold {self._get_color('error')}]Error:[/bold {self._get_color('error')}] {error}"
         self.console.print(error_text)
     
-    def print_warning(self, warning: str, emoji: str = "⚠️") -> None:
+    def print_warning(self, warning: str, emoji: str = "⚠️ ") -> None:
         """Print a warning message with emoji."""
         self.console.print(f"{emoji} [bold {self._get_color('warning')}]Warning:[/bold {self._get_color('warning')}] {warning}")
     
-    def print_info(self, info: str, emoji: str = "ℹ️") -> None:
+    def print_info(self, info: str, emoji: str = "ℹ️ ") -> None:
         """Print an info message with emoji."""
         self.console.print(f"{emoji} [bold {self._get_color('info')}]Info:[/bold {self._get_color('info')}] {info}")
     

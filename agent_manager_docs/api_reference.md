@@ -4,7 +4,7 @@ This document provides detailed information about the classes, methods, and func
 
 ## AgentsManager
 
-The main orchestrator class for managing agents and workflows.
+The main orchestrator class for managing agents and workflows. Coordinates between all other modules.
 
 ### Constructor
 
@@ -23,7 +23,7 @@ AgentsManager(app_name: str = "agents_manager_app")
 register_tool(name: str, tool_func: callable) -> None
 ```
 
-Register a tool function with a name.
+Register a tool function with a name. Delegates to AgentFactory.
 
 **Parameters:**
 - `name` (str): The name to register the tool under
@@ -35,7 +35,7 @@ Register a tool function with a name.
 register_agent(name: str, agent) -> None
 ```
 
-Register a pre-created agent.
+Register a pre-created agent. Delegates to AgentFactory.
 
 **Parameters:**
 - `name` (str): The name to register the agent under
@@ -54,6 +54,133 @@ Create a new workflow builder.
 
 **Returns:**
 - `WorkflowBuilder`: A new workflow builder instance
+
+#### register_workflow
+
+```python
+register_workflow(workflow_config: WorkflowConfig) -> None
+```
+
+Register a workflow configuration. Delegates to WorkflowManager.
+
+**Parameters:**
+- `workflow_config` (WorkflowConfig): The workflow configuration to register
+
+#### get_workflow
+
+```python
+get_workflow(name: str) -> Optional[WorkflowConfig]
+```
+
+Get a workflow configuration by name. Delegates to WorkflowManager.
+
+**Parameters:**
+- `name` (str): The name of the workflow to retrieve
+
+**Returns:**
+- `Optional[WorkflowConfig]`: The workflow configuration or None if not found
+
+#### list_workflows
+
+```python
+list_workflows() -> List[str]
+```
+
+List all registered workflow names. Delegates to WorkflowManager.
+
+**Returns:**
+- `List[str]`: A list of registered workflow names
+
+#### run_workflow
+
+```python
+async run_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None) -> Dict[str, Any]
+```
+
+Run a registered workflow with the given input. Delegates to WorkflowExecutor. This method collects all events and returns them at the end of execution.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to run
+- `input_text` (str): The input text for the workflow
+- `user_id` (str): The user ID for session management
+- `session_id` (Optional[str]): The session ID (optional, will create new if None)
+
+**Returns:**
+- `Dict[str, Any]`: A dictionary containing the results with keys:
+  - `events`: List of events generated during execution
+  - `final_output`: The final output text
+  - `session_state`: The final session state
+  - `session_id`: The session ID used
+  - `user_id`: The user ID used
+
+**Raises:**
+- `ValueError`: If the workflow is not found
+
+#### stream_workflow
+
+```python
+async stream_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None)
+```
+
+Stream a registered workflow with the given input. Delegates to WorkflowExecutor. This method yields events as they occur during workflow execution, allowing for real-time processing of streaming output.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to run
+- `input_text` (str): The input text for the workflow
+- `user_id` (str): The user ID for session management
+- `session_id` (Optional[str]): The session ID (optional, will create new if None)
+
+**Yields:**
+- Events from the ADK Runner as they occur during workflow execution
+
+**Raises:**
+- `ValueError`: If the workflow is not found
+
+#### stream_workflow
+
+```python
+async stream_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None)
+```
+
+Stream a registered workflow with the given input. Delegates to WorkflowExecutor.
+
+This method returns an async generator that yields events as they occur during
+workflow execution. Each event can be processed in real-time for streaming output.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to run
+- `input_text` (str): The input text for the workflow
+- `user_id` (str): The user ID for session management
+- `session_id` (Optional[str]): The session ID (optional, will create new if None)
+
+**Yields:**
+- Events from the ADK Runner as they occur during workflow execution
+
+**Raises:**
+- `ValueError`: If the workflow is not found
+
+#### print_workflow_info
+
+```python
+print_workflow_info(workflow_name: str) -> None
+```
+
+Print information about a registered workflow. Delegates to TerminalUIManager.
+
+**Parameters:**
+- `workflow_name` (str): The name of the workflow to display information for
+
+## WorkflowManager
+
+Manager for workflow registration and management.
+
+### Constructor
+
+```python
+WorkflowManager()
+```
+
+### Methods
 
 #### register_workflow
 
@@ -91,41 +218,116 @@ List all registered workflow names.
 **Returns:**
 - `List[str]`: A list of registered workflow names
 
+#### workflow_exists
+
+```python
+workflow_exists(name: str) -> bool
+```
+
+Check if a workflow exists.
+
+**Parameters:**
+- `name` (str): The name of the workflow to check
+
+**Returns:**
+- `bool`: True if the workflow exists, False otherwise
+
+## SessionManager
+
+Manager for session creation and management.
+
+### Constructor
+
+```python
+SessionManager(session_service: InMemorySessionService, ui: TerminalUIManager)
+```
+
+**Parameters:**
+- `session_service` (InMemorySessionService): The session service to use
+- `ui` (TerminalUIManager): The UI manager for output
+
+### Methods
+
+#### get_or_create_session
+
+```python
+async get_or_create_session(app_name: str, user_id: str, session_id: Optional[str] = None) -> object
+```
+
+Get an existing session or create a new one.
+
+**Parameters:**
+- `app_name` (str): The application name
+- `user_id` (str): The user ID
+- `session_id` (Optional[str]): The session ID (optional, will generate if None)
+
+**Returns:**
+- `object`: The session object
+
+## RunnerManager
+
+Manager for runner creation and management.
+
+### Constructor
+
+```python
+RunnerManager(app_name: str, session_service: InMemorySessionService, ui: TerminalUIManager)
+```
+
+**Parameters:**
+- `app_name` (str): The application name
+- `session_service` (InMemorySessionService): The session service to use
+- `ui` (TerminalUIManager): The UI manager for output
+
+### Methods
+
+#### create_runner
+
+```python
+create_runner(agent) -> Runner
+```
+
+Create a runner for the given agent.
+
+**Parameters:**
+- `agent`: The agent to run
+
+**Returns:**
+- `Runner`: Runner instance
+
+## WorkflowExecutor
+
+Executor for running workflows and processing events.
+
+### Constructor
+
+```python
+WorkflowExecutor(agent_factory: AgentFactory, runner_manager: RunnerManager, ui: TerminalUIManager)
+```
+
+**Parameters:**
+- `agent_factory` (AgentFactory): The agent factory to use
+- `runner_manager` (RunnerManager): The runner manager to use
+- `ui` (TerminalUIManager): The UI manager for output
+
+### Methods
+
 #### run_workflow
 
 ```python
-async run_workflow(workflow_name: str, input_text: str, user_id: str = "default_user", session_id: Optional[str] = None) -> Dict[str, Any]
+async run_workflow(workflow, input_text: str, user_id: str, session) -> Dict[str, Any]
 ```
 
-Run a registered workflow with the given input.
+Run a workflow with the given input.
 
 **Parameters:**
-- `workflow_name` (str): The name of the workflow to run
+- `workflow`: The workflow configuration
 - `input_text` (str): The input text for the workflow
-- `user_id` (str): The user ID for session management
-- `session_id` (Optional[str]): The session ID (optional, will create new if None)
+- `user_id` (str): The user ID
+- `session`: The session object
 
 **Returns:**
-- `Dict[str, Any]`: A dictionary containing the results with keys:
-  - `events`: List of events generated during execution
-  - `final_output`: The final output text
-  - `session_state`: The final session state
-  - `session_id`: The session ID used
-  - `user_id`: The user ID used
-
-**Raises:**
-- `ValueError`: If the workflow is not found
-
-#### print_workflow_info
-
-```python
-print_workflow_info(workflow_name: str) -> None
-```
-
-Print information about a registered workflow.
-
-**Parameters:**
-- `workflow_name` (str): The name of the workflow to display information for
+- `Dict[str, Any]`: Dictionary containing results
 
 ## WorkflowBuilder
 
@@ -310,7 +512,6 @@ Create an agent based on the provided configuration.
 - `ValueError`: If the agent type is unsupported or tools are not found
 
 ## TerminalUIManager
-
 
 Enhanced UI manager for handling terminal output using the rich library with emojis, animations, and visual effects.
 

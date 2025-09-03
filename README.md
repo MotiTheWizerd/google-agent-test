@@ -21,6 +21,7 @@ See the [docs](docs/) directory for complete documentation:
 - [Basic Example](src/example_usage.py)
 - [Advanced Example](src/advanced_example.py)
 - [Multi-User Example](src/multi_user_example.py)
+- [Streaming Example](src/streaming_example.py)
 
 ## Features
 
@@ -30,6 +31,7 @@ See the [docs](docs/) directory for complete documentation:
 - **Tool Registration**: Easy registration and management of tools
 - **Session Management**: Built-in session handling with state persistence
 - **Multi-User Support**: Proper isolation and management of multiple users
+- **Streaming Support**: Real-time event processing for progressive output
 - **Rich Logging**: Beautiful console output using the `rich` library
 
 ## Installation
@@ -62,4 +64,17 @@ result = await manager.run_workflow(
     user_id="user_123",
     session_id="session_456"  # Optional, will create new if None
 )
+
+# Or stream for real-time output
+async for event in manager.stream_workflow(
+    workflow_name="simple_workflow",
+    input_text="Hello, how are you?",
+    user_id="user_123",
+    session_id="session_456"
+):
+    # Process events as they occur
+    if hasattr(event, 'content') and event.content and hasattr(event.content, 'parts'):
+        for part in event.content.parts:
+            if hasattr(part, 'text') and part.text:
+                print(part.text, end='', flush=True)
 ```

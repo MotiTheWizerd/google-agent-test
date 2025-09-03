@@ -61,7 +61,85 @@ if __name__ == "__main__":
     print("Example completed!")
 ```
 
-## Example 2: Multi-User Weather Assistant
+## Example 2: Streaming Research Assistant
+
+This example demonstrates how to use the streaming functionality to get real-time responses.
+
+```python
+import asyncio
+import os
+from dotenv import load_dotenv
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from modules.core.agents_manager import AgentsManager
+
+# Load environment variables
+load_dotenv()
+
+# Mock tool for web search
+def web_search(query: str) -> str:
+    """Mock web search tool."""
+    return f"Search results for '{query}': This is a mock search result."
+
+async def streaming_research_example():
+    """Streaming research assistant example."""
+    # Create agents manager with app name
+    manager = AgentsManager(app_name="streaming_research_app")
+    
+    # Register tools
+    manager.register_tool("web_search", web_search)
+    
+    # Create workflow using builder
+    builder = manager.create_workflow_builder("streaming_research_assistant")
+    builder.add_llm_agent(
+        name="researcher",
+        model="gemini-2.0-flash",
+        instruction="You are a research assistant. Use the web_search tool to find information about topics. Provide detailed, comprehensive answers with step-by-step explanations.",
+        tools=["web_search"]
+    )
+    
+    # Build and register workflow
+    workflow = builder.set_entry_point("researcher").build()
+    manager.register_workflow(workflow)
+    
+    # Stream the workflow for a specific user
+    print("Streaming response:")
+    full_response = ""
+    
+    async for event in manager.stream_workflow(
+        workflow_name="streaming_research_assistant",
+        input_text="Explain the process of photosynthesis in detail, including the chemical reactions involved.",
+        user_id="researcher_001",
+        session_id="stream_session_001"
+    ):
+        # Process different types of events
+        if hasattr(event, 'content') and event.content and hasattr(event.content, 'parts'):
+            for part in event.content.parts:
+                if hasattr(part, 'text') and part.text:
+                    # Print streaming text as it arrives
+                    print(part.text, end='', flush=True)
+                    full_response += part.text
+        
+        # Handle final response
+        if event.is_final_response():
+            print("
+
+[Final response received]")
+    
+    print(f"
+
+Full response collected: {len(full_response)} characters")
+    return full_response
+
+# Run the example
+if __name__ == "__main__":
+    print("Running Streaming Research Assistant Example...")
+    result = asyncio.run(streaming_research_example())
+    print("Example completed!")
+```
+
+## Example 3: Multi-User Weather Assistant
 
 This example demonstrates multi-user support with session management.
 
@@ -130,7 +208,7 @@ if __name__ == "__main__":
     print("Example completed!")
 ```
 
-## Example 3: Session Continuity
+## Example 4: Session Continuity
 
 This example shows how to reuse sessions for continuous conversations.
 
@@ -202,7 +280,7 @@ if __name__ == "__main__":
     print("Example completed!")
 ```
 
-## Example 4: Complex Multi-Agent Workflow
+## Example 5: Complex Multi-Agent Workflow
 
 This example shows a complex workflow with multiple agent types.
 
@@ -322,6 +400,14 @@ You can customize these examples by:
 4. **Scalability**: The system can handle multiple concurrent users
 5. **State Persistence**: Session state is maintained across interactions
 
+## Streaming Best Practices
+
+1. **Real-time Processing**: Use streaming for applications that need real-time responses
+2. **Partial Text Handling**: Process partial text chunks as they arrive for immediate display
+3. **Event Filtering**: Filter events based on type (text, tool calls, final response) for different handling
+4. **Memory Management**: Be mindful of memory usage when collecting full responses
+5. **UI Updates**: Update UI progressively as streaming events arrive
+
 ## Troubleshooting
 
 Common issues and solutions:
@@ -332,3 +418,4 @@ Common issues and solutions:
 4. **Workflow Validation**: Check that entry points match existing agent names
 5. **Async Issues**: Remember to use `asyncio.run()` when calling async functions
 6. **Session Issues**: Verify that user_id and session_id are correctly specified
+7. **Streaming Issues**: Ensure you're properly iterating over the async generator for streaming

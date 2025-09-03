@@ -13,17 +13,29 @@
 - Support for custom user IDs and session IDs in interactive examples
 - Created separate UI module with TerminalUIManager for handling rich console output
 - Separated UI logic from business logic in AgentsManager
-- Enhanced TerminalUIManager with rich visual elements, emojis, and animated effects
-- Automatic UUID generation for sessions when not provided
-- Themed color schemes for different visual styles
+- **Modular Architecture**: Refactored AgentsManager into smaller, focused modules:
+  - WorkflowManager for workflow registration and management
+  - SessionManager for session creation and management
+  - RunnerManager for runner creation and management
+  - WorkflowExecutor for workflow execution orchestration
+- **Streaming Support**: Added streaming functionality to AgentsManager:
+  - `stream_workflow` method in AgentsManager for real-time event processing
+  - `stream_workflow` method in WorkflowExecutor for handling ADK event streaming
+  - Streaming example demonstrating real-time response processing
+  - Updated documentation with streaming usage examples and best practices
+- **Enhanced Streaming**: Improved streaming implementation with proper real-time output:
+  - Added proper handling of partial responses for streaming text output
+  - Enhanced UI manager with streaming text support
+  - Improved event processing to properly support real-time output streaming
+  - Added streaming test scripts to verify functionality
 
 ### Changed
 - Improved session creation logic to handle both existing and new sessions properly
 - Updated AgentsManager to use the correct ADK Runner API
 - Enhanced interactive agent example with better user experience
 - Moved all console output logic to TerminalUIManager
-- Updated interactive Q&A agent to use default user ID and automatic session generation
-- Removed user input prompts for session ID in interactive examples
+- **Refactored AgentsManager** to coordinate between specialized modules instead of handling all responsibilities directly
+- **Improved Streaming**: Enhanced event handling to properly support real-time output streaming with better UI integration
 
 ## 2025-09-03
 
